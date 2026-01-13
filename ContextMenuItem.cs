@@ -37,16 +37,31 @@ namespace ContextMenuPowerTool
             }
         }
 
-        private string? _disabledReason;
-        public string? DisabledReason
+        public DisableReason _disableReasonCode { get; set; }
+
+        public DisableReason DisabledReasonCode
         {
-            get => _disabledReason;
+            get => _disableReasonCode;
             set
             {
-                if (_disabledReason != value)
+                if (_disableReasonCode != value)
                 {
-                    _disabledReason = value;
-                    OnPropertyChanged(nameof(DisabledReason));
+                    _disableReasonCode = value;
+                    OnPropertyChanged(nameof(DisabledReasonCode));
+                }
+            }
+        }
+
+        private string? _disableReasonText;
+        public string? DisabledReasonText
+        {
+            get => _disableReasonText;
+            set
+            {
+                if (_disableReasonText != value)
+                {
+                    _disableReasonText = value;
+                    OnPropertyChanged(nameof(DisabledReasonText));
                 }
             }
         }

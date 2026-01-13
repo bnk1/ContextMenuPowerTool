@@ -1,3 +1,4 @@
+using ContextMenuPowerTool.Services;
 using Microsoft.Win32;
 using System.ComponentModel;
 
@@ -6,7 +7,7 @@ namespace ContextMenuPowerTool
     public partial class MainForm : Form
     {
         private readonly RegistryContextMenuScanner _scanner = new RegistryContextMenuScanner();
-        private readonly BindingList<ContextMenuItem> _items = [];
+        private readonly SortableBindingList<ContextMenuItem> _items = [];
         private readonly BindingSource _bs = [];
 
         private readonly string _backupFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "ContextMenuPowerTool_Backups");
@@ -198,7 +199,7 @@ namespace ContextMenuPowerTool
                     it.IsEnabled = enable;
                 }
 
-                RefreshScan();
+                //RefreshScan();
             }
             catch (Exception ex)
             {
@@ -252,6 +253,8 @@ namespace ContextMenuPowerTool
                 it.KeyName = targetName;
                 it.NormalizedName = normalized;
             }
+
+            ReevaluateItem(it);
         }
 
         private void btnEnsureSubmenu_Click(object sender, EventArgs e)
@@ -618,8 +621,34 @@ namespace ContextMenuPowerTool
                 $"Path: {it.HiveDisplay}\\{it.FullKeyPath}\\{it.KeyName}\r\n" +
                 $"Command: {it.Command}\r\n" +
                 $"Handler CLSID: {it.HandlerClsid}\r\n" +
-                $"Icon: {it.Icon}\r\n" + 
-                $"Disabled Reason: {it.DisabledReason}\r\n";
+                $"Icon: {it.Icon}\r\n" +
+                $"Disabled Reason: {it.DisabledReasonText}\r\n";
         }
+
+        private void btnEnableSmart_Click(object sender, EventArgs e)
+        {
+            var selected = SelectedItems().Where(x => !x.IsEnabled).ToList();
+            if (selected.Count == 0)
+                return;
+
+            foreach (var item in selected)
+            {
+                try
+                {
+                    ContextMenuEnableService.Enable(item);
+                    ReevaluateItem(item);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show( $"{item.DisplayName}: {ex.Message}", "Enable failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+        }
+
+        private static void ReevaluateItem(ContextMenuItem item)
+        {
+            RegistryContextMenuScanner.ScanSingle(item);                // Re-scan only this item’s registry key
+        }
+
     }
 }

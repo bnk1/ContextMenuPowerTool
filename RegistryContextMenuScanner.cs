@@ -1,4 +1,4 @@
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 
 namespace ContextMenuPowerTool
 {
@@ -96,35 +96,49 @@ namespace ContextMenuPowerTool
                 bool effectivelyDisabled = nameDisabled || legacyDisable || programmaticOnly || !hasCommand;
 
                 string? disabledReason = null;
+                DisableReason disableCode = DisableReason.None;
 
-                if (nameDisabled)
-                    disabledReason = "Disabled by key name";
-                else if (legacyDisable)
-                    disabledReason = "LegacyDisable value present";
-                else if (programmaticOnly)
-                    disabledReason = "ProgrammaticAccessOnly";
-                else if (!hasCommand)
+				if (nameDisabled)
+				{
+					disableCode = DisableReason.NameBased;
+					disabledReason = "Disabled by key name";
+				}
+				else if (legacyDisable)
+				{
+					disableCode = DisableReason.LegacyDisable;
+					disabledReason = "LegacyDisable value present";
+				}
+				else if (programmaticOnly)
+				{
+					disableCode = DisableReason.ProgrammaticAccessOnly;
+					disabledReason = "ProgrammaticAccessOnly";
+				}
+				else if (!hasCommand)
+				{
+					disableCode = DisableReason.MissingCommand;
                     disabledReason = "Missing command";
+                }
 
                 items.Add(new ContextMenuItem
 				{
-					DisplayName = display,
-					KeyName = subName,
-					NormalizedName = RegistryOperations.StripDisabledMarkers(subName),
-					IsEnabled = !effectivelyDisabled,
-					IsInSubmenu = false,
-					Scope = scope,
-					ItemType = ContextItemType.StaticCommand,
-					FromUserHive = includeUserHive,
-					FromMachineHive = includeMachineHive,
-					HiveDisplay = hiveDisplay,
-					BasePath = shellPath,
-					FullKeyPath = shellPath,
-					Command = command,
-					Icon = icon,
-					HandlerClsid = null,
-					IsExtended = isExtended,
-                    DisabledReason = disabledReason
+					DisplayName        = display,
+					KeyName            = subName,
+					NormalizedName     = RegistryOperations.StripDisabledMarkers(subName),
+					IsEnabled          = !effectivelyDisabled,
+					IsInSubmenu        = false,
+					Scope              = scope,
+					ItemType           = ContextItemType.StaticCommand,
+					FromUserHive       = includeUserHive,
+					FromMachineHive    = includeMachineHive,
+					HiveDisplay        = hiveDisplay,
+					BasePath           = shellPath,
+					FullKeyPath        = shellPath,
+					Command            = command,
+					Icon               = icon,
+					HandlerClsid       = null,
+					IsExtended         = isExtended,
+					DisabledReasonCode  = disableCode,
+                    DisabledReasonText = disabledReason
                 });
 			}
 		}
@@ -155,11 +169,18 @@ namespace ContextMenuPowerTool
                 bool effectivelyDisabled = minusDisabled || brokenClsid;
 
                 string? disabledReason = null;
+                DisableReason disableCode = DisableReason.None;
 
                 if (minusDisabled)
+				{
+					disableCode = DisableReason.ShellExMinusClsid;
                     disabledReason = "CLSID prefixed with '-' (ShellExView/EcMenu)";
-                else if (brokenClsid)
+				}
+				else if (brokenClsid)
+				{
+					disableCode = DisableReason.BrokenComRegistration;
                     disabledReason = "COM handler not registered";
+				}
 
                 items.Add(new ContextMenuItem
 				{
@@ -179,7 +200,8 @@ namespace ContextMenuPowerTool
 					Icon = null,
 					HandlerClsid = clsid,
 					IsExtended = false,
-					DisabledReason = disabledReason	
+					DisabledReasonCode = disableCode,
+                    DisabledReasonText = disabledReason	
                 });
 			}
 		}
@@ -240,5 +262,100 @@ namespace ContextMenuPowerTool
 
 			return keyName;
 		}
-	}
+
+		public static void ScanSingle(ContextMenuItem item)
+		{
+			switch (item.ItemType)
+			{
+				case ContextItemType.StaticCommand:
+					ScanSingle_Static(item);
+					break;
+
+				case ContextItemType.ShellExtensionHandler:
+					ScanSingle_ShellEx(item);
+					break;
+			}
+		}
+
+		private static void ScanSingle_Static(ContextMenuItem item)
+        {
+            RegistryKey root = item.HiveDisplay == "HKCU" ? Registry.CurrentUser : Registry.LocalMachine;
+
+            using var key = root.OpenSubKey( $"{item.BasePath}\\{item.KeyName}", writable: false);
+
+            if (key == null)
+            {
+                // Key gone → item effectively removed
+                item.IsEnabled = false;
+                item.DisabledReasonCode = DisableReason.NameBased;
+                item.DisabledReasonText = "Registry key not found";
+                return;
+            }
+
+            bool nameDisabled = RegistryOperations.IsDisabledKeyName(item.KeyName);
+
+            bool legacyDisable = key.GetValue("LegacyDisable") != null;
+            bool programmaticOnly = key.GetValue("ProgrammaticAccessOnly") != null;
+
+            string? command = null;
+            using (var cmd = key.OpenSubKey("command"))
+                command = cmd?.GetValue(null)?.ToString();
+
+            bool hasCommand = !string.IsNullOrWhiteSpace(command);
+
+            DisableReason reason = DisableReason.None;
+
+            if (nameDisabled)
+                reason = DisableReason.NameBased;
+            else if (legacyDisable)
+                reason = DisableReason.LegacyDisable;
+            else if (programmaticOnly)
+                reason = DisableReason.ProgrammaticAccessOnly;
+            else if (!hasCommand)
+                reason = DisableReason.MissingCommand;
+
+            item.IsEnabled = reason == DisableReason.None;
+            item.DisabledReasonCode = reason;
+            item.DisabledReasonText = reason == DisableReason.None ? null : reason.ToString();
+        }
+
+        private static void ScanSingle_ShellEx(ContextMenuItem item)
+        {
+            RegistryKey root = item.HiveDisplay == "HKCU" ? Registry.CurrentUser : Registry.LocalMachine;
+
+            using var key = root.OpenSubKey( $"{item.BasePath}\\{item.KeyName}", writable: false);
+
+            if (key == null)
+            {
+                item.IsEnabled = false;
+                item.DisabledReasonCode = DisableReason.ShellExMinusClsid;
+                item.DisabledReasonText = "Handler key not found";
+                return;
+            }
+
+            string raw = key.GetValue(null)?.ToString() ?? "";
+            bool minus = raw.StartsWith('-');
+            string clsid = raw.TrimStart('-').Trim();
+
+            bool broken = false;
+            if (!string.IsNullOrWhiteSpace(clsid))
+            {
+                using var inproc = Registry.ClassesRoot.OpenSubKey($@"CLSID\{clsid}\InprocServer32");
+                broken = inproc == null || inproc.GetValue(null) == null;
+            }
+
+            DisableReason reason = DisableReason.None;
+
+            if (minus)
+                reason = DisableReason.ShellExMinusClsid;
+            else if (broken)
+                reason = DisableReason.BrokenComRegistration;
+
+            item.IsEnabled = reason == DisableReason.None;
+            item.DisabledReasonCode = reason;
+            item.DisabledReasonText = reason == DisableReason.None ? null : reason.ToString();
+        }
+
+    }
 }
+
