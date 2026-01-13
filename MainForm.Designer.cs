@@ -49,13 +49,6 @@
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             gridItems = new DataGridView();
-            colEnabled = new DataGridViewCheckBoxColumn();
-            colName = new DataGridViewTextBoxColumn();
-            colType = new DataGridViewTextBoxColumn();
-            colScope = new DataGridViewTextBoxColumn();
-            colHive = new DataGridViewTextBoxColumn();
-            colSub = new DataGridViewCheckBoxColumn();
-            colCmd = new DataGridViewTextBoxColumn();
             txtFilter = new TextBox();
             label1 = new Label();
             chkHKCU = new CheckBox();
@@ -128,6 +121,14 @@
             aboutToolStripMenuItem = new ToolStripMenuItem();
             statusStrip1 = new StatusStrip();
             lblStatus = new ToolStripStatusLabel();
+            colEnabled = new DataGridViewCheckBoxColumn();
+            colName = new DataGridViewTextBoxColumn();
+            colType = new DataGridViewTextBoxColumn();
+            colScope = new DataGridViewTextBoxColumn();
+            colHive = new DataGridViewTextBoxColumn();
+            colSub = new DataGridViewCheckBoxColumn();
+            DisabledReason = new DataGridViewTextBoxColumn();
+            colCmd = new DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)gridItems).BeginInit();
             tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
@@ -146,7 +147,7 @@
             gridItems.AllowUserToDeleteRows = false;
             gridItems.AllowUserToResizeRows = false;
             gridItems.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            gridItems.Columns.AddRange(new DataGridViewColumn[] { colEnabled, colName, colType, colScope, colHive, colSub, colCmd });
+            gridItems.Columns.AddRange(new DataGridViewColumn[] { colEnabled, colName, colType, colScope, colHive, colSub, DisabledReason, colCmd });
             dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = SystemColors.Window;
             dataGridViewCellStyle1.Font = new Font("Tahoma", 8.142858F, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -163,79 +164,9 @@
             gridItems.RowHeadersVisible = false;
             gridItems.RowHeadersWidth = 72;
             gridItems.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            gridItems.Size = new Size(1705, 600);
+            gridItems.Size = new Size(1706, 600);
             gridItems.TabIndex = 0;
             gridItems.SelectionChanged += gridItems_SelectionChanged;
-            // 
-            // colEnabled
-            // 
-            colEnabled.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            colEnabled.DataPropertyName = "IsEnabled";
-            colEnabled.HeaderText = "On";
-            colEnabled.MinimumWidth = 9;
-            colEnabled.Name = "colEnabled";
-            colEnabled.ReadOnly = true;
-            colEnabled.Width = 47;
-            // 
-            // colName
-            // 
-            colName.DataPropertyName = "DisplayName";
-            colName.FillWeight = 12.5499144F;
-            colName.HeaderText = "Name";
-            colName.MinimumWidth = 3;
-            colName.Name = "colName";
-            colName.ReadOnly = true;
-            colName.Width = 96;
-            // 
-            // colType
-            // 
-            colType.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            colType.DataPropertyName = "ItemType";
-            colType.HeaderText = "Type";
-            colType.MinimumWidth = 9;
-            colType.Name = "colType";
-            colType.ReadOnly = true;
-            colType.Width = 97;
-            // 
-            // colScope
-            // 
-            colScope.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            colScope.DataPropertyName = "Scope";
-            colScope.HeaderText = "Scope";
-            colScope.MinimumWidth = 9;
-            colScope.Name = "colScope";
-            colScope.ReadOnly = true;
-            colScope.Width = 110;
-            // 
-            // colHive
-            // 
-            colHive.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            colHive.DataPropertyName = "HiveDisplay";
-            colHive.HeaderText = "Hive";
-            colHive.MinimumWidth = 9;
-            colHive.Name = "colHive";
-            colHive.ReadOnly = true;
-            colHive.Width = 95;
-            // 
-            // colSub
-            // 
-            colSub.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            colSub.DataPropertyName = "IsInSubmenu";
-            colSub.HeaderText = "In Menu";
-            colSub.MinimumWidth = 9;
-            colSub.Name = "colSub";
-            colSub.ReadOnly = true;
-            colSub.Width = 97;
-            // 
-            // colCmd
-            // 
-            colCmd.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            colCmd.DataPropertyName = "Command";
-            colCmd.FillWeight = 187.450043F;
-            colCmd.HeaderText = "Command / CLSID";
-            colCmd.MinimumWidth = 9;
-            colCmd.Name = "colCmd";
-            colCmd.ReadOnly = true;
             // 
             // txtFilter
             // 
@@ -530,7 +461,7 @@
             txtDetails.Name = "txtDetails";
             txtDetails.ReadOnly = true;
             txtDetails.ScrollBars = ScrollBars.Vertical;
-            txtDetails.Size = new Size(455, 600);
+            txtDetails.Size = new Size(454, 600);
             txtDetails.TabIndex = 1;
             // 
             // tableLayoutPanel1
@@ -584,7 +515,7 @@
             splitContainer1.Panel2.RightToLeft = RightToLeft.No;
             splitContainer1.RightToLeft = RightToLeft.No;
             splitContainer1.Size = new Size(2168, 602);
-            splitContainer1.SplitterDistance = 457;
+            splitContainer1.SplitterDistance = 456;
             splitContainer1.TabIndex = 16;
             // 
             // flowLayoutPanel1
@@ -934,6 +865,84 @@
             lblStatus.Size = new Size(206, 30);
             lblStatus.Text = "toolStripStatusLabel1";
             // 
+            // colEnabled
+            // 
+            colEnabled.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            colEnabled.DataPropertyName = "IsEnabled";
+            colEnabled.HeaderText = "On";
+            colEnabled.MinimumWidth = 9;
+            colEnabled.Name = "colEnabled";
+            colEnabled.ReadOnly = true;
+            colEnabled.Width = 47;
+            // 
+            // colName
+            // 
+            colName.DataPropertyName = "DisplayName";
+            colName.FillWeight = 12.5499144F;
+            colName.HeaderText = "Name";
+            colName.MinimumWidth = 3;
+            colName.Name = "colName";
+            colName.ReadOnly = true;
+            colName.Width = 96;
+            // 
+            // colType
+            // 
+            colType.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            colType.DataPropertyName = "ItemType";
+            colType.HeaderText = "Type";
+            colType.MinimumWidth = 9;
+            colType.Name = "colType";
+            colType.ReadOnly = true;
+            colType.Width = 97;
+            // 
+            // colScope
+            // 
+            colScope.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            colScope.DataPropertyName = "Scope";
+            colScope.HeaderText = "Scope";
+            colScope.MinimumWidth = 9;
+            colScope.Name = "colScope";
+            colScope.ReadOnly = true;
+            colScope.Width = 110;
+            // 
+            // colHive
+            // 
+            colHive.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            colHive.DataPropertyName = "HiveDisplay";
+            colHive.HeaderText = "Hive";
+            colHive.MinimumWidth = 9;
+            colHive.Name = "colHive";
+            colHive.ReadOnly = true;
+            colHive.Width = 95;
+            // 
+            // colSub
+            // 
+            colSub.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            colSub.DataPropertyName = "IsInSubmenu";
+            colSub.HeaderText = "In Menu";
+            colSub.MinimumWidth = 9;
+            colSub.Name = "colSub";
+            colSub.ReadOnly = true;
+            colSub.Width = 97;
+            // 
+            // DisabledReason
+            // 
+            DisabledReason.HeaderText = "Disabled Reason";
+            DisabledReason.MinimumWidth = 9;
+            DisabledReason.Name = "DisabledReason";
+            DisabledReason.ReadOnly = true;
+            DisabledReason.Width = 175;
+            // 
+            // colCmd
+            // 
+            colCmd.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            colCmd.DataPropertyName = "Command";
+            colCmd.FillWeight = 187.450043F;
+            colCmd.HeaderText = "Command / CLSID";
+            colCmd.MinimumWidth = 9;
+            colCmd.Name = "colCmd";
+            colCmd.ReadOnly = true;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(12F, 30F);
@@ -1014,14 +1023,15 @@
         private ToolStripMenuItem searchToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator7;
         private ToolStripMenuItem aboutToolStripMenuItem;
+        private StatusStrip statusStrip1;
+        private ToolStripStatusLabel lblStatus;
         private DataGridViewCheckBoxColumn colEnabled;
         private DataGridViewTextBoxColumn colName;
         private DataGridViewTextBoxColumn colType;
         private DataGridViewTextBoxColumn colScope;
         private DataGridViewTextBoxColumn colHive;
         private DataGridViewCheckBoxColumn colSub;
+        private DataGridViewTextBoxColumn DisabledReason;
         private DataGridViewTextBoxColumn colCmd;
-        private StatusStrip statusStrip1;
-        private ToolStripStatusLabel lblStatus;
     }
 }

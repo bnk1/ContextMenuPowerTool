@@ -629,7 +629,8 @@ namespace ContextMenuPowerTool
                 $"Path: {it.HiveDisplay}\\{it.FullKeyPath}\\{it.KeyName}\r\n" +
                 $"Command: {it.Command}\r\n" +
                 $"Handler CLSID: {it.HandlerClsid}\r\n" +
-                $"Icon: {it.Icon}\r\n";
+                $"Icon: {it.Icon}\r\n" + 
+                $"Disabled Reason: {it.DisabledReason}\r\n";
         }
     }
 }

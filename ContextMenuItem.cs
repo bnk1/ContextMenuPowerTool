@@ -23,9 +23,14 @@ namespace ContextMenuPowerTool
         public string? HandlerClsid { get; set; }                 // for shellex handlers
         public bool IsExtended { get; set; }                      // Shift+RightClick only
 
+        public string? DisabledReason { get; set; }
+
         public override string ToString()
         {
             return $"{DisplayName} ({HiveDisplay}\\{FullKeyPath})";
         }
+
+        
+
     }
 }

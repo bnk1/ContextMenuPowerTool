@@ -58,10 +58,21 @@ namespace ContextMenuPowerTool
 				string? muiVerb = RegistryKeyUtil.SafeGetString(itemKey, "MUIVerb");
 				string? defaultName = RegistryKeyUtil.SafeGetString(itemKey, null);
 				string display = !string.IsNullOrWhiteSpace(muiVerb) ? muiVerb! : !string.IsNullOrWhiteSpace(defaultName) ? defaultName! : subName;
+				
+				bool nameDisabled = RegistryOperations.IsDisabledKeyName(subName);	// Disabled via key name
+                bool legacyDisable = false;                                         // Disabled via "LegacyDisable" value
+                bool programmaticOnly = false;                                      // Disabled via "ProgrammaticAccessOnly" value
 
-				bool isDisabled = RegistryOperations.IsDisabledKeyName(subName);
+                try
+				{
+					legacyDisable = itemKey.GetValue("LegacyDisable") != null;
+					programmaticOnly = itemKey.GetValue("ProgrammaticAccessOnly") != null;
+				}
+				catch 
+				{ 
+				}
 
-				bool isExtended = false;
+                bool isExtended = false;
 				try
 				{
 					isExtended = itemKey.GetValue("Extended") != null;
@@ -72,19 +83,35 @@ namespace ContextMenuPowerTool
 
 				string? icon = RegistryKeyUtil.SafeGetString(itemKey, "Icon");
 
-				string? command = null;
-				using (RegistryKey? cmdKey = itemKey.OpenSubKey("command", false))
+				string? command = null;												// Disabed if no command found
+
+                using (RegistryKey? cmdKey = itemKey.OpenSubKey("command", false))
 				{
 					if (cmdKey != null)
 						command = RegistryKeyUtil.SafeGetString(cmdKey, null);
 				}
 
-				items.Add(new ContextMenuItem
+                bool hasCommand = !string.IsNullOrWhiteSpace(command);
+
+                bool effectivelyDisabled = nameDisabled || legacyDisable || programmaticOnly || !hasCommand;
+
+                string? disabledReason = null;
+
+                if (nameDisabled)
+                    disabledReason = "Disabled by key name";
+                else if (legacyDisable)
+                    disabledReason = "LegacyDisable value present";
+                else if (programmaticOnly)
+                    disabledReason = "ProgrammaticAccessOnly";
+                else if (!hasCommand)
+                    disabledReason = "Missing command";
+
+                items.Add(new ContextMenuItem
 				{
 					DisplayName = display,
 					KeyName = subName,
 					NormalizedName = RegistryOperations.StripDisabledMarkers(subName),
-					IsEnabled = !isDisabled,
+					IsEnabled = !effectivelyDisabled,
 					IsInSubmenu = false,
 					Scope = scope,
 					ItemType = ContextItemType.StaticCommand,
@@ -96,8 +123,9 @@ namespace ContextMenuPowerTool
 					Command = command,
 					Icon = icon,
 					HandlerClsid = null,
-					IsExtended = isExtended
-				});
+					IsExtended = isExtended,
+                    DisabledReason = disabledReason
+                });
 			}
 		}
 
@@ -106,19 +134,39 @@ namespace ContextMenuPowerTool
 			foreach (string subName in RegistryKeyUtil.SafeGetSubKeyNames(handlersKey))
 			{
 				using RegistryKey? itemKey = handlersKey.OpenSubKey(subName, false);
+
 				if (itemKey == null)
 					continue;
 
-				string? clsid = RegistryKeyUtil.SafeGetString(itemKey, null);
+                string rawClsid = RegistryKeyUtil.SafeGetString(itemKey, null) ?? "";
 
-				bool isDisabled = RegistryOperations.IsDisabledKeyName(subName);
+                bool minusDisabled = rawClsid.StartsWith("-", StringComparison.Ordinal);
+                string clsid = rawClsid.TrimStart('-').Trim();
 
-				items.Add(new ContextMenuItem
+                bool brokenClsid = false;
+
+                if (!string.IsNullOrWhiteSpace(clsid))
+                {
+                    using var inproc = Registry.ClassesRoot.OpenSubKey($@"CLSID\{clsid}\InprocServer32");
+                    brokenClsid = inproc == null || inproc.GetValue(null) == null;
+                }
+
+                // FINAL effective rule
+                bool effectivelyDisabled = minusDisabled || brokenClsid;
+
+                string? disabledReason = null;
+
+                if (minusDisabled)
+                    disabledReason = "CLSID prefixed with '-' (ShellExView/EcMenu)";
+                else if (brokenClsid)
+                    disabledReason = "COM handler not registered";
+
+                items.Add(new ContextMenuItem
 				{
 					DisplayName = subName,
 					KeyName = subName,
 					NormalizedName = RegistryOperations.StripDisabledMarkers(subName),
-					IsEnabled = !isDisabled,
+					IsEnabled = !effectivelyDisabled,
 					IsInSubmenu = false,
 					Scope = scope,
 					ItemType = ContextItemType.ShellExtensionHandler,
@@ -130,8 +178,9 @@ namespace ContextMenuPowerTool
 					Command = null,
 					Icon = null,
 					HandlerClsid = clsid,
-					IsExtended = false
-				});
+					IsExtended = false,
+					DisabledReason = disabledReason	
+                });
 			}
 		}
 
