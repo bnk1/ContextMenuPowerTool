@@ -9,7 +9,7 @@ namespace ContextMenuPowerTool
 
 		public static IReadOnlyList<ContextMenuItem> Scan(bool includeUserHive, bool includeMachineHive, HashSet<ContextScope> scopes)
 		{
-			List<ContextMenuItem> items = new List<ContextMenuItem>();
+			List<ContextMenuItem> items = [];
 
 			if (includeUserHive)
 				ScanHive(items, Registry.CurrentUser, @"Software\Classes", "HKCU", includeUserHive: true, includeMachineHive: false, scopes: scopes);
@@ -140,7 +140,7 @@ namespace ContextMenuPowerTool
 
                 string rawClsid = RegistryKeyUtil.SafeGetString(itemKey, null) ?? "";
 
-                bool minusDisabled = rawClsid.StartsWith("-", StringComparison.Ordinal);
+                bool minusDisabled = rawClsid.StartsWith('-');
                 string clsid = rawClsid.TrimStart('-').Trim();
 
                 bool brokenClsid = false;

@@ -127,7 +127,7 @@
             colScope = new DataGridViewTextBoxColumn();
             colHive = new DataGridViewTextBoxColumn();
             colSub = new DataGridViewCheckBoxColumn();
-            DisabledReason = new DataGridViewTextBoxColumn();
+            colReason = new DataGridViewTextBoxColumn();
             colCmd = new DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)gridItems).BeginInit();
             tableLayoutPanel1.SuspendLayout();
@@ -147,7 +147,7 @@
             gridItems.AllowUserToDeleteRows = false;
             gridItems.AllowUserToResizeRows = false;
             gridItems.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            gridItems.Columns.AddRange(new DataGridViewColumn[] { colEnabled, colName, colType, colScope, colHive, colSub, DisabledReason, colCmd });
+            gridItems.Columns.AddRange(new DataGridViewColumn[] { colEnabled, colName, colType, colScope, colHive, colSub, colReason, colCmd });
             dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = SystemColors.Window;
             dataGridViewCellStyle1.Font = new Font("Tahoma", 8.142858F, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -164,7 +164,7 @@
             gridItems.RowHeadersVisible = false;
             gridItems.RowHeadersWidth = 72;
             gridItems.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            gridItems.Size = new Size(1706, 600);
+            gridItems.Size = new Size(2211, 985);
             gridItems.TabIndex = 0;
             gridItems.SelectionChanged += gridItems_SelectionChanged;
             // 
@@ -461,7 +461,7 @@
             txtDetails.Name = "txtDetails";
             txtDetails.ReadOnly = true;
             txtDetails.ScrollBars = ScrollBars.Vertical;
-            txtDetails.Size = new Size(454, 600);
+            txtDetails.Size = new Size(378, 985);
             txtDetails.TabIndex = 1;
             // 
             // tableLayoutPanel1
@@ -494,7 +494,7 @@
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
-            tableLayoutPanel1.Size = new Size(2289, 104);
+            tableLayoutPanel1.Size = new Size(2718, 104);
             tableLayoutPanel1.TabIndex = 14;
             // 
             // splitContainer1
@@ -506,16 +506,16 @@
             // 
             // splitContainer1.Panel1
             // 
-            splitContainer1.Panel1.Controls.Add(txtDetails);
+            splitContainer1.Panel1.Controls.Add(gridItems);
             splitContainer1.Panel1.RightToLeft = RightToLeft.No;
             // 
             // splitContainer1.Panel2
             // 
-            splitContainer1.Panel2.Controls.Add(gridItems);
+            splitContainer1.Panel2.Controls.Add(txtDetails);
             splitContainer1.Panel2.RightToLeft = RightToLeft.No;
             splitContainer1.RightToLeft = RightToLeft.No;
-            splitContainer1.Size = new Size(2168, 602);
-            splitContainer1.SplitterDistance = 456;
+            splitContainer1.Size = new Size(2597, 987);
+            splitContainer1.SplitterDistance = 2213;
             splitContainer1.TabIndex = 16;
             // 
             // flowLayoutPanel1
@@ -537,7 +537,7 @@
             flowLayoutPanel1.Dock = DockStyle.Top;
             flowLayoutPanel1.Location = new Point(0, 76);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(2289, 47);
+            flowLayoutPanel1.Size = new Size(2718, 47);
             flowLayoutPanel1.TabIndex = 17;
             // 
             // flowLayoutPanel2
@@ -547,7 +547,7 @@
             flowLayoutPanel2.Dock = DockStyle.Top;
             flowLayoutPanel2.Location = new Point(0, 76);
             flowLayoutPanel2.Name = "flowLayoutPanel2";
-            flowLayoutPanel2.Size = new Size(2289, 0);
+            flowLayoutPanel2.Size = new Size(2718, 0);
             flowLayoutPanel2.TabIndex = 18;
             // 
             // toolStrip1
@@ -556,7 +556,7 @@
             toolStrip1.Items.AddRange(new ToolStripItem[] { newToolStripButton, openToolStripButton, saveToolStripButton, printToolStripButton, toolStripSeparator, cutToolStripButton, copyToolStripButton, pasteToolStripButton, toolStripSeparator1, helpToolStripButton });
             toolStrip1.Location = new Point(0, 38);
             toolStrip1.Name = "toolStrip1";
-            toolStrip1.Size = new Size(2289, 38);
+            toolStrip1.Size = new Size(2718, 38);
             toolStrip1.TabIndex = 19;
             toolStrip1.Text = "toolStrip1";
             // 
@@ -648,7 +648,7 @@
             menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, editToolStripMenuItem, toolsToolStripMenuItem, helpToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(2289, 38);
+            menuStrip1.Size = new Size(2718, 38);
             menuStrip1.TabIndex = 20;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -853,17 +853,17 @@
             // 
             statusStrip1.ImageScalingSize = new Size(28, 28);
             statusStrip1.Items.AddRange(new ToolStripItem[] { lblStatus });
-            statusStrip1.Location = new Point(0, 888);
+            statusStrip1.Location = new Point(0, 1273);
             statusStrip1.Name = "statusStrip1";
-            statusStrip1.Size = new Size(2289, 39);
+            statusStrip1.Size = new Size(2718, 39);
             statusStrip1.TabIndex = 21;
             statusStrip1.Text = "statusStrip1";
             // 
             // lblStatus
             // 
             lblStatus.Name = "lblStatus";
-            lblStatus.Size = new Size(206, 30);
-            lblStatus.Text = "toolStripStatusLabel1";
+            lblStatus.Size = new Size(69, 30);
+            lblStatus.Text = "Status";
             // 
             // colEnabled
             // 
@@ -877,13 +877,14 @@
             // 
             // colName
             // 
+            colName.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             colName.DataPropertyName = "DisplayName";
             colName.FillWeight = 12.5499144F;
             colName.HeaderText = "Name";
             colName.MinimumWidth = 3;
             colName.Name = "colName";
             colName.ReadOnly = true;
-            colName.Width = 96;
+            colName.Width = 110;
             // 
             // colType
             // 
@@ -925,13 +926,15 @@
             colSub.ReadOnly = true;
             colSub.Width = 97;
             // 
-            // DisabledReason
+            // colReason
             // 
-            DisabledReason.HeaderText = "Disabled Reason";
-            DisabledReason.MinimumWidth = 9;
-            DisabledReason.Name = "DisabledReason";
-            DisabledReason.ReadOnly = true;
-            DisabledReason.Width = 175;
+            colReason.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            colReason.DataPropertyName = "DisabledReason";
+            colReason.HeaderText = "Disabled Reason";
+            colReason.MinimumWidth = 9;
+            colReason.Name = "colReason";
+            colReason.ReadOnly = true;
+            colReason.Width = 207;
             // 
             // colCmd
             // 
@@ -947,7 +950,7 @@
             // 
             AutoScaleDimensions = new SizeF(12F, 30F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(2289, 927);
+            ClientSize = new Size(2718, 1312);
             Controls.Add(tableLayoutPanel1);
             Controls.Add(flowLayoutPanel1);
             Controls.Add(flowLayoutPanel2);
@@ -963,8 +966,8 @@
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel1.PerformLayout();
             splitContainer1.Panel1.ResumeLayout(false);
-            splitContainer1.Panel1.PerformLayout();
             splitContainer1.Panel2.ResumeLayout(false);
+            splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
             splitContainer1.ResumeLayout(false);
             flowLayoutPanel1.ResumeLayout(false);
@@ -1031,7 +1034,7 @@
         private DataGridViewTextBoxColumn colScope;
         private DataGridViewTextBoxColumn colHive;
         private DataGridViewCheckBoxColumn colSub;
-        private DataGridViewTextBoxColumn DisabledReason;
+        private DataGridViewTextBoxColumn colReason;
         private DataGridViewTextBoxColumn colCmd;
     }
 }

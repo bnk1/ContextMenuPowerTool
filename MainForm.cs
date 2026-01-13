@@ -6,8 +6,8 @@ namespace ContextMenuPowerTool
     public partial class MainForm : Form
     {
         private readonly RegistryContextMenuScanner _scanner = new RegistryContextMenuScanner();
-        private readonly BindingList<ContextMenuItem> _items = new BindingList<ContextMenuItem>();
-        private readonly BindingSource _bs = new BindingSource();
+        private readonly BindingList<ContextMenuItem> _items = [];
+        private readonly BindingSource _bs = [];
 
         private readonly string _backupFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "ContextMenuPowerTool_Backups");
 
@@ -80,7 +80,7 @@ namespace ContextMenuPowerTool
 
         private HashSet<ContextScope> GetSelectedScopes()
         {
-            HashSet<ContextScope> scopes = new HashSet<ContextScope>();
+            HashSet<ContextScope> scopes = [];
 
             if (chkAllFiles.Checked)
             {
@@ -131,13 +131,7 @@ namespace ContextMenuPowerTool
 
             view = view.Where(x =>
             {
-                if (x.ItemType == ContextItemType.StaticCommand && showStatic)
-                    return true;
-
-                if (x.ItemType == ContextItemType.ShellExtensionHandler && showHandlers)
-                    return true;
-
-                return false;
+                return x.ItemType == ContextItemType.StaticCommand && showStatic || x.ItemType == ContextItemType.ShellExtensionHandler && showHandlers;
             });
 
             if (!string.IsNullOrWhiteSpace(f))
@@ -155,7 +149,7 @@ namespace ContextMenuPowerTool
 
         private List<ContextMenuItem> SelectedItems()
         {
-            List<ContextMenuItem> sel = new List<ContextMenuItem>();
+            List<ContextMenuItem> sel = [];
             foreach (DataGridViewRow row in gridItems.SelectedRows)
             {
                 if (row.DataBoundItem is ContextMenuItem it)
@@ -229,10 +223,7 @@ namespace ContextMenuPowerTool
             }
 
             string containerPath = parentPath;
-            using RegistryKey? container = root.OpenSubKey(containerPath, true);
-            
-            if (container == null)
-                throw new InvalidOperationException($"Cannot open: {it.HiveDisplay}\\{containerPath}");
+            using RegistryKey? container = root.OpenSubKey(containerPath, true) ?? throw new InvalidOperationException($"Cannot open: {it.HiveDisplay}\\{containerPath}");
 
             string currentName = it.KeyName;
             string normalized = RegistryOperations.StripDisabledMarkers(currentName);
@@ -507,9 +498,7 @@ namespace ContextMenuPowerTool
 
             string safeName = RegistryOperations.MakeSafeKeyName(it.NormalizedName);
 
-            List<string> keys = submenuShell.GetSubKeyNames()
-                .OrderBy(x => x, StringComparer.OrdinalIgnoreCase)
-                .ToList();
+            List<string> keys = [.. submenuShell.GetSubKeyNames().OrderBy(x => x, StringComparer.OrdinalIgnoreCase)];
 
             int idx = keys.FindIndex(k => string.Equals(RegistryContextMenuScanner.StripOrderPrefix(k), safeName, StringComparison.OrdinalIgnoreCase));
             if (idx < 0)
