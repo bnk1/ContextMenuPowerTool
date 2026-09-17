@@ -11,8 +11,10 @@
         private System.Windows.Forms.CheckBox chkHKLM;
 
         private System.Windows.Forms.CheckBox chkAllFiles;
+        private System.Windows.Forms.CheckBox chkAllFsObjects;
         private System.Windows.Forms.CheckBox chkDirectory;
         private System.Windows.Forms.CheckBox chkBackground;
+        private System.Windows.Forms.CheckBox chkFolder;
         private System.Windows.Forms.CheckBox chkDrive;
 
         private System.Windows.Forms.CheckBox chkShowDisabledOnly;
@@ -62,8 +64,10 @@
             chkHKCU = new CheckBox();
             chkHKLM = new CheckBox();
             chkAllFiles = new CheckBox();
+            chkAllFsObjects = new CheckBox();
             chkDirectory = new CheckBox();
             chkBackground = new CheckBox();
+            chkFolder = new CheckBox();
             chkDrive = new CheckBox();
             chkShowDisabledOnly = new CheckBox();
             chkShowInSubmenuOnly = new CheckBox();
@@ -302,9 +306,20 @@
             chkAllFiles.TabIndex = 5;
             chkAllFiles.Text = "AllFiles";
             chkAllFiles.UseVisualStyleBackColor = true;
-            // 
+            //
+            // chkAllFsObjects
+            //
+            chkAllFsObjects.AutoSize = true;
+            chkAllFsObjects.Location = new Point(1216, 6);
+            chkAllFsObjects.Margin = new Padding(5, 6, 5, 6);
+            chkAllFsObjects.Name = "chkAllFsObjects";
+            chkAllFsObjects.Size = new Size(103, 34);
+            chkAllFsObjects.TabIndex = 5;
+            chkAllFsObjects.Text = "AllFsObjects";
+            chkAllFsObjects.UseVisualStyleBackColor = true;
+            //
             // chkDirectory
-            // 
+            //
             chkDirectory.AutoSize = true;
             chkDirectory.Location = new Point(1329, 6);
             chkDirectory.Margin = new Padding(5, 6, 5, 6);
@@ -324,9 +339,20 @@
             chkBackground.TabIndex = 7;
             chkBackground.Text = "Background";
             chkBackground.UseVisualStyleBackColor = true;
-            // 
+            //
+            // chkFolder
+            //
+            chkFolder.AutoSize = true;
+            chkFolder.Location = new Point(1462, 6);
+            chkFolder.Margin = new Padding(5, 6, 5, 6);
+            chkFolder.Name = "chkFolder";
+            chkFolder.Size = new Size(103, 34);
+            chkFolder.TabIndex = 7;
+            chkFolder.Text = "Folder";
+            chkFolder.UseVisualStyleBackColor = true;
+            //
             // chkDrive
-            // 
+            //
             chkDrive.AutoSize = true;
             chkDrive.Location = new Point(1621, 6);
             chkDrive.Margin = new Padding(5, 6, 5, 6);
@@ -626,8 +652,10 @@
             flowLayoutPanel1.Controls.Add(chkHKLM);
             flowLayoutPanel1.Controls.Add(chkShowInSubmenuOnly);
             flowLayoutPanel1.Controls.Add(chkAllFiles);
+            flowLayoutPanel1.Controls.Add(chkAllFsObjects);
             flowLayoutPanel1.Controls.Add(chkDirectory);
             flowLayoutPanel1.Controls.Add(chkBackground);
+            flowLayoutPanel1.Controls.Add(chkFolder);
             flowLayoutPanel1.Controls.Add(chkDrive);
             flowLayoutPanel1.Controls.Add(chkShowStatic);
             flowLayoutPanel1.Controls.Add(chkShowHandlers);

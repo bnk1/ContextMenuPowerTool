@@ -23,8 +23,11 @@ namespace ContextMenuPowerTool
 			}
 		}
 
-		public static string? SafeGetString(RegistryKey key, string? valueName)
+		public static string? SafeGetString(RegistryKey? key, string? valueName)
 		{
+			if (key == null)
+				return null;
+
 			try
 			{
 				object? v = key.GetValue(valueName);

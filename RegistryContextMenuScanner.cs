@@ -158,12 +158,26 @@ namespace ContextMenuPowerTool
                 string clsid = rawClsid.TrimStart('-').Trim();
 
                 bool brokenClsid = false;
+                string? friendlyName = null;                        // COM friendly name (HKCR\CLSID\{clsid})
+                string? handlerModule = null;                       // backing DLL (InprocServer32)
 
                 if (!string.IsNullOrWhiteSpace(clsid))
                 {
-                    using var inproc = Registry.ClassesRoot.OpenSubKey($@"CLSID\{clsid}\InprocServer32");
-                    brokenClsid = inproc == null || inproc.GetValue(null) == null;
+                    using (RegistryKey? clsidKey = Registry.ClassesRoot.OpenSubKey($@"CLSID\{clsid}"))
+                        friendlyName = RegistryKeyUtil.SafeGetString(clsidKey, null);
+
+                    using RegistryKey? inproc = Registry.ClassesRoot.OpenSubKey($@"CLSID\{clsid}\InprocServer32");
+                    handlerModule = RegistryKeyUtil.SafeGetString(inproc, null);
+                    brokenClsid = inproc == null || string.IsNullOrWhiteSpace(handlerModule);
                 }
+
+                // The subkey name (e.g. "DropboxExt") is rarely descriptive; a single
+                // shell-extension handler produces many runtime verbs ("Transfer a copy",
+                // "Copy Dropbox link", ...), so surface the resolved COM name to make the
+                // owning app recognizable and searchable.
+                string handlerDisplay = string.IsNullOrWhiteSpace(friendlyName)
+                    ? subName
+                    : $"{subName} ({friendlyName})";
 
                 // FINAL effective rule
                 bool effectivelyDisabled = minusDisabled || brokenClsid;
@@ -184,7 +198,7 @@ namespace ContextMenuPowerTool
 
                 items.Add(new ContextMenuItem
 				{
-					DisplayName = subName,
+					DisplayName = handlerDisplay,
 					KeyName = subName,
 					NormalizedName = RegistryOperations.StripDisabledMarkers(subName),
 					IsEnabled = !effectivelyDisabled,
@@ -199,9 +213,11 @@ namespace ContextMenuPowerTool
 					Command = null,
 					Icon = null,
 					HandlerClsid = clsid,
+					HandlerModule = handlerModule,
+					FriendlyName = friendlyName,
 					IsExtended = false,
 					DisabledReasonCode = disableCode,
-                    DisabledReasonText = disabledReason	
+                    DisabledReasonText = disabledReason
                 });
 			}
 		}
@@ -243,8 +259,10 @@ namespace ContextMenuPowerTool
 			return scope switch
 			{
 				ContextScope.AllFiles => @"*",
+				ContextScope.AllFilesystemObjects => @"AllFilesystemObjects",
 				ContextScope.Directory => @"Directory",
 				ContextScope.DirectoryBackground => @"Directory\Background",
+				ContextScope.Folder => @"Folder",
 				ContextScope.Drive => @"Drive",
 				_ => @"*"
 			};
