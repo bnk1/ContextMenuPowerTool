@@ -21,6 +21,8 @@ namespace ContextMenuPowerTool
         public string? Command { get; set; }
         public string? Icon { get; set; }
         public string? HandlerClsid { get; set; }                 // for shellex handlers
+        public string? HandlerModule { get; set; }                // backing COM DLL for shellex handlers (InprocServer32)
+        public string? FriendlyName { get; set; }                 // resolved COM friendly name (HKCR\CLSID\{clsid})
         public bool IsExtended { get; set; }                      // Shift+RightClick only
 
         private bool _isEnabled;

@@ -24,8 +24,10 @@ namespace ContextMenuPowerTool
             chkHKLM.Checked = true;
 
             chkAllFiles.Checked = true;
+            chkAllFsObjects.Checked = true;
             chkDirectory.Checked = true;
             chkBackground.Checked = true;
+            chkFolder.Checked = true;
             chkDrive.Checked = true;
 
             chkShowStatic.Checked = true;
@@ -151,7 +153,9 @@ namespace ContextMenuPowerTool
                     x.DisplayName.Contains(f, StringComparison.OrdinalIgnoreCase) ||
                     x.KeyName.Contains(f, StringComparison.OrdinalIgnoreCase) ||
                     (x.Command?.Contains(f, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                    (x.HandlerClsid?.Contains(f, StringComparison.OrdinalIgnoreCase) ?? false));
+                    (x.HandlerClsid?.Contains(f, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (x.HandlerModule?.Contains(f, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (x.FriendlyName?.Contains(f, StringComparison.OrdinalIgnoreCase) ?? false));
             }
 
             _bs.DataSource = view.ToList();
@@ -631,6 +635,8 @@ namespace ContextMenuPowerTool
                 $"Path: {it.HiveDisplay}\\{it.FullKeyPath}\\{it.KeyName}\r\n" +
                 $"Command: {it.Command}\r\n" +
                 $"Handler CLSID: {it.HandlerClsid}\r\n" +
+                $"Handler Name: {it.FriendlyName}\r\n" +
+                $"Handler Module: {it.HandlerModule}\r\n" +
                 $"Icon: {it.Icon}\r\n" +
                 $"Disabled Reason: {it.DisabledReasonText}\r\n";
         }
