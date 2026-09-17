@@ -88,6 +88,11 @@ namespace ContextMenuPowerTool
                 scopes.Add(ContextScope.AllFiles);
             }
 
+            if (chkAllFsObjects.Checked)
+            {
+                scopes.Add(ContextScope.AllFilesystemObjects);
+            }
+
             if (chkDirectory.Checked)
             {
                 scopes.Add(ContextScope.Directory);
@@ -96,6 +101,11 @@ namespace ContextMenuPowerTool
             if (chkBackground.Checked)
             {
                 scopes.Add(ContextScope.DirectoryBackground);
+            }
+
+            if (chkFolder.Checked)
+            {
+                scopes.Add(ContextScope.Folder);
             }
 
             if (chkDrive.Checked)
@@ -647,7 +657,7 @@ namespace ContextMenuPowerTool
 
         private static void ReevaluateItem(ContextMenuItem item)
         {
-            RegistryContextMenuScanner.ScanSingle(item);                // Re-scan only this item’s registry key
+            RegistryContextMenuScanner.ScanSingle(item);                // Re-scan only this item's registry key
         }
 
     }

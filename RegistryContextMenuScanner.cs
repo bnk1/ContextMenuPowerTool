@@ -243,8 +243,10 @@ namespace ContextMenuPowerTool
 			return scope switch
 			{
 				ContextScope.AllFiles => @"*",
+				ContextScope.AllFilesystemObjects => @"AllFilesystemObjects",
 				ContextScope.Directory => @"Directory",
 				ContextScope.DirectoryBackground => @"Directory\Background",
+				ContextScope.Folder => @"Folder",
 				ContextScope.Drive => @"Drive",
 				_ => @"*"
 			};
