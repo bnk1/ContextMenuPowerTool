@@ -34,6 +34,7 @@
         private System.Windows.Forms.Button btnRestore;
         private System.Windows.Forms.Button btnRestartExplorer;
         private System.Windows.Forms.Button btnOpenRegedit;
+        private System.Windows.Forms.Button btnSaveResults;
 
         private System.Windows.Forms.TextBox txtDetails;
 
@@ -85,6 +86,7 @@
             btnRestore = new Button();
             btnRestartExplorer = new Button();
             btnOpenRegedit = new Button();
+            btnSaveResults = new Button();
             txtDetails = new TextBox();
             tableLayoutPanel1 = new TableLayoutPanel();
             btnEnableSmart = new Button();
@@ -561,7 +563,20 @@
             btnOpenRegedit.TabIndex = 2;
             btnOpenRegedit.Text = "Open in Regedit";
             btnOpenRegedit.Click += btnOpenRegedit_Click;
-            // 
+            //
+            // btnSaveResults
+            //
+            btnSaveResults.AutoSize = true;
+            btnSaveResults.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnSaveResults.Dock = DockStyle.Fill;
+            btnSaveResults.Margin = new Padding(5, 6, 5, 6);
+            btnSaveResults.Name = "btnSaveResults";
+            btnSaveResults.Size = new Size(234, 40);
+            btnSaveResults.TabIndex = 15;
+            btnSaveResults.Text = "Save Results...";
+            btnSaveResults.UseVisualStyleBackColor = true;
+            btnSaveResults.Click += btnSaveResults_Click;
+            //
             // txtDetails
             // 
             txtDetails.Dock = DockStyle.Fill;
@@ -600,6 +615,7 @@
             tableLayoutPanel1.Controls.Add(btnRestartExplorer, 3, 1);
             tableLayoutPanel1.Controls.Add(btnUp, 4, 1);
             tableLayoutPanel1.Controls.Add(btnEnableSmart, 6, 0);
+            tableLayoutPanel1.Controls.Add(btnSaveResults, 6, 1);
             tableLayoutPanel1.Dock = DockStyle.Top;
             tableLayoutPanel1.Location = new Point(0, 123);
             tableLayoutPanel1.Name = "tableLayoutPanel1";

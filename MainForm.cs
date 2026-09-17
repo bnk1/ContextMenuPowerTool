@@ -666,5 +666,44 @@ namespace ContextMenuPowerTool
             RegistryContextMenuScanner.ScanSingle(item);                // Re-scan only this item's registry key
         }
 
+        private void btnSaveResults_Click(object sender, EventArgs e)
+        {
+            if (_items.Count == 0)
+            {
+                MessageBox.Show(this, "Nothing to save - run a scan first.", "Save Results", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            using SaveFileDialog sfd = new SaveFileDialog
+            {
+                Title = "Save scan results",
+                Filter = "CSV (spreadsheet) (*.csv)|*.csv|Text report (*.txt)|*.txt",
+                FileName = $"ContextMenuScan_{DateTime.Now:yyyyMMdd_HHmmss}.csv",
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)
+            };
+
+            if (sfd.ShowDialog(this) != DialogResult.OK)
+            {
+                return;
+            }
+
+            Cursor = Cursors.WaitCursor;
+            try
+            {
+                // Export the full scan (every item), not just the filtered view.
+                ResultsExportService.Export(sfd.FileName, [.. _items], GetSelectedScopes(), chkHKCU.Checked, chkHKLM.Checked);
+                lblStatus.Text = $"Saved {_items.Count} items to {Path.GetFileName(sfd.FileName)}";
+                MessageBox.Show(this, $"Saved {_items.Count} items to:\r\n{sfd.FileName}", "Save Results", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message, "Save failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                Cursor = Cursors.Default;
+            }
+        }
+
     }
 }
